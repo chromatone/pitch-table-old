@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Chromatone app beta</title>
+  <link href="css/styles.css" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <link rel="stylesheet" href="assets/buefy.min.css" />
+</head>
+
+<body>
+
+  <div id="pitch-app">
+    <pitch-table></pitch-table>
+  </div>
+
+  <script type="module">
+
+  import Vue from './assets/vue.min.js'
+  import Buefy from './assets/buefy.js'
+  import StartAudioContext from './assets/StartAudioContext.js'
+
+  Vue.use(Buefy.default)
+
+  Vue.prototype.$midiBus = new Vue(); // Global event bus
+
+  import {pitchTable} from './js/components/pitch-table.js'
+  import {midiBus} from './js/components/midi-bus.js'
+
+  const ct = new Vue({
+    el:"#pitch-app",
+    components:{
+      pitchTable,
+      midiBus,
+    },
+    data: {
+      channels:{},
+    },
+    mounted: function() {
+      if (
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        )
+      ) {
+        StartAudioContext(Tone.context, "button").then(function() {});
+      }
+    }
+
+  })
+
+  </script>
+
+</body>
+
+</html>
