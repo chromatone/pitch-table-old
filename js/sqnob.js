@@ -1,4 +1,4 @@
-export const sqnob = {
+export default {
   template: `
   <div @mousedown.prevent="activate"
   @touchstart.prevent="activate" @dblclick="reset()" class="sqnob">

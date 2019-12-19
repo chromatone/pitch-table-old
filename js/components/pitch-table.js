@@ -1,111 +1,9 @@
-import {sqnob} from '../sqnob.js'
-import Synth from '../Synth.js'
+import sqnob from '../sqnob.js'
+import noteCell from './note-cell.js'
 
-const noteCell = {
-	template:`
-	<td	class="note-button"
-				:style="{backgroundColor:color, color:textColor}"
-				@click="toggle()"
-				:class="{'active-cell':active}"
-				>
-		<div class="note-grid">
-
-			<div class="begin">
-				{{note.name}}<br />{{octave}}
-			</div>
-			<div class="note-freq">
-				{{frequency}}&nbsp;Hz
-			</div>
-			<div class="note-freq">
-				{{bpm}}&nbsp;BPM
-			</div>
-
-		</div>
-
-	</td>
-	`,
-	props:['note','octave','root', 'tuning','type','filter'],
-	data() {
-		return {
-			active:false,
-			started:false,
-			justCents:[0,112,204,316,386,498,590,702,814,884,1017,1088],
-		}
-	},
-	computed: {
-		frequency() {
-			return this.calcFreq(this.note.pitch, this.octave)
-		},
-		bpm() {
-			return (this.frequency*60).toFixed(1)
-		},
-		textColor() {
-			if (Math.abs(this.octave+2)*8>40) {
-				return 'hsla(0,0%,0%,'+(this.active  ? '1' : '0.8')+')'
-			} else {
-				return 'hsla(0,0%,1000%,'+(this.active  ? '1' : '0.8')+')'
-			}
-		},
-		color() {
-			return 'hsla('+this.note.pitch*30+','+ (this.active  ? '100' : '75') +'%,'+Math.abs(this.octave+2)*8+'%)'
-		}
-	},
-	watch: {
-		root() {
-			this.refresh()
-		},
-		tuning() {
-			this.refresh()
-		},
-		type(val) {
-			if(this.osc) {
-				this.osc.type=val;
-			}
-		}
-	},
-	methods:{
-		refresh() {
-			if(this.osc) {
-				this.osc.frequency.setValueAtTime(this.calcFreq(this.note.pitch, this.octave),Tone.context.currentTime)
-			}
-		},
-		toggle() {
-			if(!this.active) {
-				if(Tone.context.state=='suspended') {Tone.context.resume()}
-
-					this.osc = Tone.context.createOscillator();
-					this.osc.type=this.type;
-					this.osc.frequency.value=this.frequency;
-
-					this.osc.connect(this.filter.input);
-					this.osc.start();
-					this.started=true;
-
-				this.active=true;
-			} else {
-				this.active=false;
-				this.osc.stop();
-				this.osc.disconnect();
-			}
-		},
-		calcFreq(pitch, octave=3, root=this.root) {
-			let hz=0;
-			if (this.tuning=='equal') {
-				hz = Number(root * Math.pow(2, octave - 4 + pitch / 12)).toFixed(2)
-			}
-			if(this.tuning=='just') {
-				let diff = Number(Math.pow((Math.pow(2,1/1200)),this.justCents[pitch]));
-				hz = Number(root*Math.pow(2,(octave-4))*diff).toFixed(2)
-
-			}
-			 return hz
-		},
-	}
-}
-
-export const pitchTable = {
+export default {
 	components: {
-		'note-cell':noteCell,
+		noteCell,
 		sqnob
 	},
 	template: `  <div id="pitch-table">
@@ -127,13 +25,15 @@ export const pitchTable = {
 		</b-field>
 	</div>
 	<div>
-		<b-field label="Low Pass">
+		<h3>Filter</h3>
+		<b-field>
 			<sqnob v-model="filterFreq" unit=" Hz" param="LP FILTER" :step="1" :min="20" :max="25000"></sqnob>
 		</b-field>
 	</div>
 
 	<div>
-		<b-field label="A4">
+		<h3>A4, Hz</h3>
+		<b-field>
 			<sqnob v-model="rootFreq" unit=" Hz" param="FREQUENCY" :step="1" :min="415" :max="500"></sqnob>
 		</b-field>
 	</div>
@@ -239,7 +139,7 @@ export const pitchTable = {
 		}
 	},
 	mounted() {
-    this.filter.connect(Synth.volume);
+    this.filter.toMaster();
   },
   beforeDestroy() {
 		this.filter.disconnect();
