@@ -2,6 +2,8 @@
 
 When you slow down a square or sawtooth wave oscillator, you get acoustic beat, that still conform the octave rule. Exploring different beats playing together makes you better understand the harmony of simple pitch ratios and feel the vibe of experimental polyrhythms. It's a place to explore the transition from a beating to a pitch.
 
+![screen](screenshot.png)
+
 ## Chromatone apps
 
 Visual music language interactive education, research and practice tools.
