@@ -15,7 +15,7 @@ We develop a toolset for anyone who wants to see music and hear colors by themse
 
 [chromatone.center](https://chromatone.center)
 
-## Glitch
+## Edit on Glitch
 
 The most recent version of the apps is at [chromatone.glitch.me](https://chromatone.glitch.me/). You can view and edit all the code online with [Glitch editor](https://glitch.com/edit/#!/chromatone).
 
