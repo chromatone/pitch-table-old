@@ -1,45 +1,12 @@
-import sqnob from '../sqnob.js'
 import noteCell from './note-cell.js'
 
 export default {
+	props:['oscType','tuning','filterFreq','rootFreq'],
 	components: {
 		noteCell,
-		sqnob
 	},
-	template: `  <div id="pitch-table">
-
-	<div class="control-row">
-	<div>
-		<h3>Intonation</h3>
-		<b-field grouped group-multiline  >
-
-			<b-radio-button  size="is-small" native-value="equal" v-model="tuning" >EQUAL</b-radio-button>
-			<b-radio-button  size="is-small" native-value="just" v-model="tuning">JUST</b-radio-button>
-		</b-field>
-	</div>
-	<div>
-		<h3>Oscillator type</h3>
-		<b-field grouped group-multiline>
-			<b-radio-button :key="type"  size="is-small" v-for="type in oscTypes"
-				:native-value="type" v-model="oscType">{{type}}</b-radio-button>
-		</b-field>
-	</div>
-	<div>
-		<h3>Filter</h3>
-		<b-field>
-			<sqnob v-model="filterFreq" unit=" Hz" param="LP FILTER" :step="1" :min="20" :max="25000"></sqnob>
-		</b-field>
-	</div>
-
-	<div>
-		<h3>A4, Hz</h3>
-		<b-field>
-			<sqnob v-model="rootFreq" unit=" Hz" param="FREQUENCY" :step="1" :min="415" :max="500"></sqnob>
-		</b-field>
-	</div>
-
-
-	</div>
+	template: `
+	<div >
 
 		<div class="table-holder">
 			<table class="pitch-table">
@@ -103,13 +70,9 @@ export default {
 			],
       octaveRange:[-6,9],
       frequency:1,
-      oscType:'sawtooth',
       oscTypes:['sine','triangle','sawtooth','square'],
-      tuning:'equal',
       sound:false,
       started:false,
-      rootFreq:440,
-			filterFreq: 350,
       osc:'',
 			filter: new Tone.AutoFilter()
 	  }

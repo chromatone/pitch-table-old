@@ -1,29 +1,19 @@
-import StartAudioContext from '../assets/StartAudioContext.js'
-
-Vue.use(Buefy.default)
-
-Vue.prototype.$midiBus = new Vue(); // Global event bus
-
 import pitchTable from './components/pitch-table.js'
-import {midiBus} from './components/midi-bus.js'
+import controlRow from './components/control-row.js'
 
 const ct = new Vue({
   el:"#pitch-app",
   components:{
     pitchTable,
-    midiBus,
+    controlRow,
   },
   data: {
     channels:{},
+    params:{
+      oscType:'sawtooth',
+      tuning:'equal',
+      rootFreq:440,
+      filterFreq: 350,
+    },
   },
-  mounted: function() {
-    if (
-      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent
-      )
-    ) {
-      StartAudioContext(Tone.context, "button").then(function() {});
-    }
-  }
-
 })

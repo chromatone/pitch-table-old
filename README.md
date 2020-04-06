@@ -1,6 +1,6 @@
 # A vast table of all musical notes and corresponding rhythm tempos
 
-When you slow down a square or sawtooth wave oscillator, you get acoustic beat, that still conform the octave rule. Exploring different beats playing together makes you better understand the harmony of simple pitch ratios and feel the vibe of experimental polyrhythms. It's a place to explore the transition from a beating to a pitch.
+When you slow down a square or sawtooth wave oscillator, you get acoustic beat, that still conforms the octave rule. Exploring different beats playing together helps better understand the harmony of simple pitch ratios and feel the vibe of experimental polyrhythms. It's a place to explore the transition of our perception from the tempo to the pitch.
 
 ![screen](screenshot.png)
 
@@ -15,9 +15,6 @@ We develop a toolset for anyone who wants to see music and hear colors by themse
 
 [chromatone.center](https://chromatone.center)
 
-## Edit on Glitch
-
-The most recent version of the apps is at [chromatone.glitch.me](https://chromatone.glitch.me/). You can view and edit all the code online with [Glitch editor](https://glitch.com/edit/#!/chromatone).
 
 The project is non-commercial and is in early development state now. It requires a lot of coding, testing and debugging, and also some architectural thought. Chromatone apps are an effort to construct a really flexible, yet simple cross-platform audio-visual interactive component system, that can be used to build a big range of complex education and exploration tools by music and design enthusiasts.
 

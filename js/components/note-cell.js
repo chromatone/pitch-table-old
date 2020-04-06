@@ -11,10 +11,10 @@ export default {
 				{{note.name}}<br />{{octave}}
 			</div>
 			<div class="note-freq">
-				{{frequency}}&nbsp;Hz
+				{{frequency | round}}&nbsp;Hz
 			</div>
 			<div class="note-freq">
-				{{bpm}}&nbsp;BPM
+				{{bpm | round}}&nbsp;BPM
 			</div>
 
 		</div>
@@ -27,6 +27,17 @@ export default {
 			active:false,
 			started:false,
 			justCents:[0,112,204,316,386,498,590,702,814,884,1017,1088],
+		}
+	},
+	filters: {
+		round(value) {
+			if (value>1e6) {
+				value = (value/1e6).toFixed(2) + 'M'
+			}
+			if (value>1e3) {
+				value = (value/1e3).toFixed(2) + 'k'
+			}
+			return value
 		}
 	},
 	computed: {

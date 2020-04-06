@@ -7,15 +7,18 @@
   <link href="css/styles.css" rel="stylesheet" />
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
   <script src="assets/vue.min.js"></script>
-  <script src="assets/buefy.js"></script>
   <script src="assets/Tone.js"></script>
-  <link rel="stylesheet" href="assets/buefy.min.css" />
+
 </head>
 
 <body>
 
   <div id="pitch-app">
-    <pitch-table></pitch-table>
+
+    <control-row v-bind.sync="params"></control-row>
+
+    <pitch-table v-bind="params"></pitch-table>
+
   </div>
 
   <script type="module" src="js/app.js">

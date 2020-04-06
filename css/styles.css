@@ -13,102 +13,19 @@ body {
   font-family: 'Neusa Demibold', sans-serif;
 }
 
-
-
-.midi-bus {
-padding: 6px;
-font-size:12px;
-}
-
-.absolute {
-  position:absolute;
-}
-
-.status {
-border:#999 2px solid;
-border-radius:2px;
-color:#999;
-padding:4px;
-margin:4px;
-line-height: 2;
-cursor: pointer;
-}
-
-.status.active {
-border-color:green;
-color:green;
-}
-
-.status.error {
-border-color:red;
-color:red;
-}
-
-/* MIDI-monitor */
-
-.midi-monitor {
-  display:flex;
-  height:100%;
-  align-items: stretch;
-}
-
-.midi-channel {
-  max-height: 100%;
-  flex:1 0 14px;
-  margin:0 2px;
-	display: flex;
-	flex-direction: column;
-	flex-wrap: nowrap;
-	justify-content: stretch;
-	align-items: stretch;
-	align-content: center;
-  background-color: hsla(60,0%,50%,0.1);
-}
-
-.midi-cc {
-  flex:1 1 6%;
-  display: flex;
-	flex-direction: row;
-	flex-wrap: nowrap;
-	align-items:baseline;
-	align-content:center;
-
-}
-
-.cc-bar {
-  background-color: #bbb;
-  height:100%;
-  display: flex;
-	flex-direction: row;
-	flex-wrap: nowrap;
-	align-items:center;
-	align-content:center;
-}
-
-.midi-notes.channel-name {
-  color:black;
-}
-
-.midi-notes {
+button {
   padding:4px;
-  flex:1 1 6%;
-	display: flex;
-	flex-direction: row;
-	flex-wrap: nowrap;
-	justify-content: center;
-	align-items: center;
-	align-content: center;
-  color:white;
-  background-color: hsla(60,0%,60%,0.2);
+  margin:0 2px;
+  background-color: #eee;
+  border:none;
+  box-shadow:0px 1px 3px #888;
+  transition: box-shadow 300ms, color 300ms;
 }
 
-/* tone table */
-
-.slider-holder {
-  padding:0 40px;
+button.active {
+  background-color: #ddd;
+  box-shadow:0px 0px 1px #888;
 }
-
-
 
 /*
 sqnob
@@ -153,6 +70,7 @@ sqnob
 }
 .pitch-table {
   border-collapse: separate;
+  border-spacing:0;
 }
 .control-row {
 	display:grid;
@@ -191,6 +109,7 @@ button[disabled="disabled"] {
 	user-select: none;
 	opacity:1;
   border:1px solid hsla(0,0%,0%,0);
+  transition:border 300ms;
 }
 .note-grid {
 
