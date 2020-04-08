@@ -1,16 +1,10 @@
 
-
-@font-face {
-  font-family: "Neusa Bold";
-  src: url(https://cdn.glitch.com/1520e3d1-e09f-4c87-bd42-89b5fa497055%2FNeusa-Bold.woff?1543956951264);
-}
-
 html,
 body {
   margin: 0;
   width: 100%;
   height: 100%;
-  font-family: 'Neusa Demibold', sans-serif;
+  font-family: sans-serif;
 }
 
 button {
@@ -75,9 +69,12 @@ sqnob
   border-spacing:0;
 }
 .control-row {
-	display:grid;
-	grid-template-columns: 1fr 1fr 2fr 1fr 1fr;
-  padding:1em 2em;
+	display:flex;
+  padding:1em;
+  font-size:14px;
+}
+.control-row > div {
+  margin:0 calc(min(8px,1%));
 }
 .label {
 	place-self:center;
