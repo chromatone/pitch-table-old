@@ -113,11 +113,10 @@ button[disabled="disabled"] {
   transition:border 300ms;
 }
 .note-grid {
-
 	display:grid;
   grid-gap:0;
 	grid-template-columns: 1fr 3fr;
-	grid-template-rows: 1fr 1fr;
+	grid-template-rows: 1fr;
 }
 .note-button.black-text {
 	color:#000;

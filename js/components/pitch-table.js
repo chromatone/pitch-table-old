@@ -7,7 +7,6 @@ export default {
 	},
 	template: `
 	<div >
-
 		<div class="table-holder">
 			<table class="pitch-table">
 				<tr v-for="note in reversedNotes" class="note-block" >
@@ -69,14 +68,14 @@ export default {
 						  }
 			],
       octaveRange:[-6,9],
-      frequency:1,
-      oscTypes:['sine','triangle','sawtooth','square'],
-      sound:false,
-      started:false,
-      osc:'',
-			filter: new Tone.AutoFilter()
+			filter: new Tone.AutoFilter(),
+			volume: new Tone.Volume(Tone.gainToDb(0.1)),
 	  }
   },
+	mounted() {
+		this.filter.connect(this.volume.input);
+		this.volume.toMaster();
+	},
 	computed: {
 		reversedNotes() {
 			let notes=[...this.notes]
@@ -84,26 +83,18 @@ export default {
 		},
 		octaves() {
 			let octaves=[];
-			for(let i=this.octaveRange[0];i<=this.octaveRange[1];i++) {
+			for (let i=this.octaveRange[0]; i<=this.octaveRange[1]; i++) {
 				octaves.push(i)
 			}
 			return octaves
 		}
 	},
-	methods: {
-
-	},
 	watch: {
-		frequency() {
-			this.osc && this.osc.frequency.setValueAtTime(this.frequency,Tone.context.currentTime)
-		},
 		filterFreq (val) {
 			this.filter.filter.frequency.setValueAtTime(val);
 		}
 	},
-	mounted() {
-    this.filter.toMaster();
-  },
+
   beforeDestroy() {
 		this.filter.disconnect();
 	}

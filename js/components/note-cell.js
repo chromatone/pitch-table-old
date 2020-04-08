@@ -1,5 +1,10 @@
+import cellContent from './cell-content.js'
+
 export default {
 	props:['note','octave','root', 'tuning','type','filter'],
+	components:{
+		cellContent,
+	},
 	data() {
 		return {
 			active:false,
@@ -7,118 +12,90 @@ export default {
 			justCents:[0,112,204,316,386,498,590,702,814,884,1017,1088],
 			activeTouches:{},
 			gain:0,
-			volume: new Tone.Volume(-Infinity),
+			osc:new Tone.Oscillator(440, this.type),
 		}
 	},
 	mounted() {
-		this.volume.connect(this.filter.input);
-	},
-	computed: {
-		frequency() {
-			return this.calcFreq(this.note.pitch, this.octave)
-		},
-		bpm() {
-			return (this.frequency*60).toFixed(1)
-		},
-		textColor() {
-			if (Math.abs(this.octave+2)*8>40) {
-				return 'hsla(0,0%,0%,'+(this.active  ? '1' : '0.8')+')'
-			} else {
-				return 'hsla(0,0%,1000%,'+(this.active  ? '1' : '0.8')+')'
-			}
-		},
-		color() {
-			return 'hsla('+this.note.pitch*30+','+ (this.active  ? '100' : '75') +'%,'+Math.abs(this.octave+2)*8+'%)'
-		}
-	},
-	watch: {
-		root() {
-			this.refresh()
-		},
-		tuning() {
-			this.refresh()
-		},
-		type(val) {
-			if(this.osc) {
-				this.osc.type=val;
-			}
-		}
+		this.osc.frequency.value=this.frequency;
+		this.osc.volume.value=-Infinity;
+		this.osc.connect(this.filter.input);
 	},
 	template:`
 	<td	class="note-button"
 				:style="{backgroundColor:color, color:textColor}"
 				@mousedown.prevent=""
-				@touchmove="move(event,octave+note.name)"
-		    @touchstart="activate(event,octave+note.name)" @dblclick="reset()"
+				@touchmove="move"
+		    @touchstart="tap"
+				@touchend="untap"
+				@dblclick="reset()"
 				:class="{'active-cell':active}"
 				>
-		<div class="note-grid">
 
-			<div class="begin">
-				{{note.name}}<br />{{octave}}
-			</div>
-			<div class="note-freq">
-				{{frequency | round}}&nbsp;Hz
-			</div>
-			<div class="note-freq">
-				{{bpm | round}}&nbsp;BPM
-			</div>
-
-		</div>
+			<cell-content
+				:note="note"
+				:octave="octave"
+				:frequency="frequency"></cell-content>
 
 	</td>
 	`,
 	methods:{
-		copyTouch(touch) {
-		  return { identifier: touch.identifier, pageX: touch.pageX, pageY: touch.pageY };
-		},
-		activate(ev,note) {
+		tap(ev) {
+			if (Tone.context.state=='suspended') {
+					Tone.context.resume()
+			}
 			for (let i=0; i<ev.changedTouches.length; i++) {
 				let touch = ev.changedTouches[i];
 				this.activeTouches[touch.identifier]=this.copyTouch(touch)
+			}
+			if (!this.started) {
+				this.osc.start();
+				this.started=true;
+			}
+		},
+		untap() {
+			if (this.active && !this.moved) {
+				this.gain=0;
+			}
+			if (this.moved) {
+				this.moved=false;
 			}
 		},
 		move(ev) {
 			for (let i=0; i<ev.changedTouches.length; i++) {
 				let touch = this.copyTouch(ev.changedTouches[i]);
 				let prevTouch = this.activeTouches[touch.identifier];
-				if (prevTouch) {
-					let dx=touch.pageX-prevTouch.pageX;
-					let dy=-touch.pageY+prevTouch.pageY;
-					if(Math.abs(dy)>Math.abs(dx)) {
-						ev.preventDefault();
-						console.log(this.note.name+this.octave,dy/100,dx)
-						prevTouch=touch
+				if (!prevTouch) { continue }
+				this.moved=true;
+				let dx=touch.pageX-prevTouch.pageX;
+				let dy=-touch.pageY+prevTouch.pageY;
+				if(Math.abs(dy)+3>Math.abs(dx)) {
+					let dys = dy/1000
+					ev.preventDefault();
+					if (this.gain+dys<0) {
+						this.gain=0
+						prevTouch.pageY=touch.pageY
+					} else if (this.gain+dys>1) {
+						this.gain=1
+						prevTouch.pageY=touch.pageY
+					} else {
+						this.gain=this.gain+dys
 					}
-
+					prevTouch.pageX=touch.pageX
 				}
 			}
+		},
+		reset() {
+			this.gain=0
 		},
 		refresh() {
 			if(this.osc) {
 				this.osc.frequency.setValueAtTime(this.calcFreq(this.note.pitch, this.octave),Tone.context.currentTime)
 			}
 		},
-		toggle() {
-			if(!this.active) {
-				if(Tone.context.state=='suspended') {Tone.context.resume()}
-
-					this.osc = Tone.context.createOscillator();
-					this.osc.type=this.type;
-					this.osc.frequency.value=this.frequency;
-
-					this.osc.connect(this.volume);
-					this.osc.start();
-					this.started=true;
-
-				this.active=true;
-			} else {
-				this.active=false;
-				this.osc.stop();
-				this.osc.disconnect();
-			}
+		copyTouch(touch) {
+			return { identifier: touch.identifier, pageX: touch.pageX, pageY: touch.pageY };
 		},
-		calcFreq(pitch, octave=3, root=this.root) {
+		calcFreq(pitch, octave=3, root=this.root, tuning) {
 			let hz=0;
 			if (this.tuning=='equal') {
 				hz = Number(root * Math.pow(2, octave - 4 + pitch / 12)).toFixed(2)
@@ -131,15 +108,38 @@ export default {
 			 return hz
 		},
 	},
-	filters: {
-		round(value) {
-			if (value>1e6) {
-				value = (value/1e6).toFixed(2) + 'M'
+	computed: {
+		frequency() {
+			return this.calcFreq(this.note.pitch, this.octave)
+		},
+		textColor() {
+			if (Math.abs(this.octave+2)*8>40) {
+				return 'hsla(0,0%,0%,'+(this.active  ? '1' : '0.8')+')'
+			} else {
+				return 'hsla(0,0%,100%,'+(this.active  ? '1' : '0.8')+')'
 			}
-			if (value>1e3) {
-				value = (value/1e3).toFixed(2) + 'k'
+		},
+		color() {
+			return 'hsla('+this.note.pitch*30+','+ (this.active  ? '100' : '75') +'%,'+Math.abs(this.octave+2)*8+'%)'
+		}
+	},
+	watch: {
+		gain(val) {
+			this.osc.volume.value = Tone.gainToDb(val)
+			if (val==0) {this.active=false} else {
+				this.active=true;
 			}
-			return value
+		},
+		root() {
+			this.refresh()
+		},
+		tuning() {
+			this.refresh()
+		},
+		type(val) {
+			if(this.osc) {
+				this.osc.type=val;
+			}
 		}
 	},
 }

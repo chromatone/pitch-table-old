@@ -16,4 +16,7 @@ const ct = new Vue({
       filterFreq: 350,
     },
   },
+  methods: {
+  
+  }
 })

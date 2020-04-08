@@ -27,7 +27,6 @@ export default {
     };
   },
   created() {
-
     document.addEventListener("keydown", e => {
       if (e.key == "Shift") this.shiftPressed = true;
     });
