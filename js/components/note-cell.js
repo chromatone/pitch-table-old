@@ -11,6 +11,7 @@ export default {
 			started:false,
 			justCents:[0,112,204,316,386,498,590,702,814,884,1017,1088],
 			activeTouches:{},
+			mouse: {x:0, y:0},
 			gain:0,
 			osc:new Tone.Oscillator(440, this.type),
 		}
@@ -23,14 +24,13 @@ export default {
 	template:`
 	<td	class="note-button"
 				:style="{backgroundColor:color, color:textColor}"
-				@mousedown.prevent=""
+				@mousedown.prevent="mouseDown"
 				@touchmove="move"
 		    @touchstart="tap"
 				@touchend="untap"
-				@dblclick="reset()"
 				:class="{'active-cell':active}"
 				>
-
+			<div class="level" :style="{height:gain*100+'%'}"></div>
 			<cell-content
 				:note="note"
 				:octave="octave"
@@ -39,17 +39,41 @@ export default {
 	</td>
 	`,
 	methods:{
-		tap(ev) {
-			if (Tone.context.state=='suspended') {
-					Tone.context.resume()
+		mouseDown(ev) {
+			this.startContext();
+			this.mouse.x=ev.pageX;
+			this.mouse.y=ev.pageY;
+			this.moved=false;
+			document.onmousemove = this.mouseMove;
+			document.onmouseup = this.mouseUp;
+		},
+		mouseMove(ev) {
+			console.log('11')
+			let {pageX,pageY} = ev;
+			let dy=this.mouse.y-pageY;
+			if (Math.abs(dy)>1) {this.moved=true}
+			let dys = dy/5000
+			if (this.gain+dys<0) {
+				this.gain=0
+				this.mouse.y=pageY
+			} else if (this.gain+dys>1) {
+				this.gain=1
+				this.mouse.y=pageY
+			} else {
+				this.gain=this.gain+dys
 			}
+
+		},
+		mouseUp(ev){
+			if (this.active && !this.moved) {this.gain=0}
+			document.onmouseup = undefined;
+      document.onmousemove = undefined;
+		},
+		tap(ev) {
+			this.startContext();
 			for (let i=0; i<ev.changedTouches.length; i++) {
 				let touch = ev.changedTouches[i];
 				this.activeTouches[touch.identifier]=this.copyTouch(touch)
-			}
-			if (!this.started) {
-				this.osc.start();
-				this.started=true;
 			}
 		},
 		untap() {
@@ -69,7 +93,7 @@ export default {
 				let dx=touch.pageX-prevTouch.pageX;
 				let dy=-touch.pageY+prevTouch.pageY;
 				if(Math.abs(dy)+3>Math.abs(dx)) {
-					let dys = dy/1000
+					let dys = dy/5000
 					ev.preventDefault();
 					if (this.gain+dys<0) {
 						this.gain=0
@@ -83,9 +107,6 @@ export default {
 					prevTouch.pageX=touch.pageX
 				}
 			}
-		},
-		reset() {
-			this.gain=0
 		},
 		refresh() {
 			if(this.osc) {
@@ -107,6 +128,15 @@ export default {
 			}
 			 return hz
 		},
+		startContext() {
+			if (Tone.context.state=='suspended') {
+					Tone.context.resume()
+			}
+			if (!this.started) {
+				this.osc.start();
+				this.started=true;
+			}
+		},
 	},
 	computed: {
 		frequency() {
@@ -125,7 +155,7 @@ export default {
 	},
 	watch: {
 		gain(val) {
-			this.osc.volume.value = Tone.gainToDb(val)
+			this.osc.volume.targetRampTo(Tone.gainToDb(val),1)
 			if (val==0) {this.active=false} else {
 				this.active=true;
 			}

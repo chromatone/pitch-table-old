@@ -5,7 +5,7 @@ export default {
     @touchstart.prevent="activate" @dblclick="reset()" class="sqnob">
 
     <div class="sqnob-info">
-      {{value | round}}{{unit}}<br>
+      {{value | round}}&nbsp;{{unit}}<br>
       {{param}}
     </div>
 

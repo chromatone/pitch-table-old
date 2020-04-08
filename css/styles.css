@@ -34,6 +34,7 @@ sqnob
 .sqnob {
   position:relative;
   cursor: pointer;
+  max-width:min-content;
   border:1px solid hsla(0,0%,0%,0.25);
   border-radius: 4px;
   font-size:1em;
@@ -75,7 +76,7 @@ sqnob
 }
 .control-row {
 	display:grid;
-	grid-template-columns: 1fr 1fr 1fr 1fr;
+	grid-template-columns: 1fr 1fr 2fr 1fr 1fr;
   padding:1em 2em;
 }
 .label {
@@ -104,6 +105,7 @@ button[disabled="disabled"] {
 	white-space: nowrap;
 }
 .note-button {
+  position:relative;
 	padding:5px;
 	color:#fff;
 	cursor:pointer;
@@ -128,4 +130,12 @@ button[disabled="disabled"] {
 .note-freq {
     font-size: 0.8em;
     line-height: 16px;
+}
+.level {
+  background-color: #fff;
+  width:5px;
+  position:absolute;
+  bottom:0;
+  left:0;
+  height:0;
 }

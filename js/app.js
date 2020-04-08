@@ -14,9 +14,10 @@ const ct = new Vue({
       tuning:'equal',
       rootFreq:440,
       filterFreq: 350,
+      vol:0.5,
     },
   },
   methods: {
-  
+
   }
 })

@@ -1,7 +1,7 @@
 import noteCell from './note-cell.js'
 
 export default {
-	props:['oscType','tuning','filterFreq','rootFreq'],
+	props:['oscType','tuning','filterFreq','rootFreq', 'vol'],
 	components: {
 		noteCell,
 	},
@@ -69,7 +69,7 @@ export default {
 			],
       octaveRange:[-6,9],
 			filter: new Tone.AutoFilter(),
-			volume: new Tone.Volume(Tone.gainToDb(0.1)),
+			volume: new Tone.Volume(Tone.gainToDb(this.vol)),
 	  }
   },
 	mounted() {
@@ -90,8 +90,11 @@ export default {
 		}
 	},
 	watch: {
+		vol(val) {
+			this.volume.volume.targetRampTo(Tone.gainToDb(val),1)
+		},
 		filterFreq (val) {
-			this.filter.filter.frequency.setValueAtTime(val);
+			this.filter.filter.frequency.value = val;
 		}
 	},
 
