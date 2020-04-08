@@ -1,13 +1,12 @@
 import noteCell from './note-cell.js'
 
 export default {
-	props:['oscType','tuning','filterFreq','rootFreq'],
+	props:['oscType','tuning','filterFreq','rootFreq', 'vol'],
 	components: {
 		noteCell,
 	},
 	template: `
 	<div >
-
 		<div class="table-holder">
 			<table class="pitch-table">
 				<tr v-for="note in reversedNotes" class="note-block" >
@@ -69,14 +68,14 @@ export default {
 						  }
 			],
       octaveRange:[-6,9],
-      frequency:1,
-      oscTypes:['sine','triangle','sawtooth','square'],
-      sound:false,
-      started:false,
-      osc:'',
-			filter: new Tone.AutoFilter()
+			filter: new Tone.AutoFilter(),
+			volume: new Tone.Volume(Tone.gainToDb(this.vol)),
 	  }
   },
+	mounted() {
+		this.filter.connect(this.volume.input);
+		this.volume.toMaster();
+	},
 	computed: {
 		reversedNotes() {
 			let notes=[...this.notes]
@@ -84,26 +83,21 @@ export default {
 		},
 		octaves() {
 			let octaves=[];
-			for(let i=this.octaveRange[0];i<=this.octaveRange[1];i++) {
+			for (let i=this.octaveRange[0]; i<=this.octaveRange[1]; i++) {
 				octaves.push(i)
 			}
 			return octaves
 		}
 	},
-	methods: {
-
-	},
 	watch: {
-		frequency() {
-			this.osc && this.osc.frequency.setValueAtTime(this.frequency,Tone.context.currentTime)
+		vol(val) {
+			this.volume.volume.targetRampTo(Tone.gainToDb(val),1)
 		},
 		filterFreq (val) {
-			this.filter.filter.frequency.setValueAtTime(val);
+			this.filter.filter.frequency.value = val;
 		}
 	},
-	mounted() {
-    this.filter.toMaster();
-  },
+
   beforeDestroy() {
 		this.filter.disconnect();
 	}

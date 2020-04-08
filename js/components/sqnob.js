@@ -1,13 +1,16 @@
 export default {
   template: `
-  <div @mousedown.prevent="activate"
-  @touchstart.prevent="activate" @dblclick="reset()" class="sqnob">
-    <div class="sqnob-info">
-      {{value | round}}{{unit}}<br>
-      {{param}}
+  <div
+    @mousedown.prevent="activate"
+    @touchstart.prevent="activate" @dblclick="reset()" class="sqnob">
 
+    <div class="sqnob-info">
+      {{value | round}}&nbsp;{{unit}}<br>
+      {{param}}
     </div>
+
     <div class="sqnob-value" :style="{height:internalValue+'%'}"></div>
+
   </div>
   `,
   props: ["max", "min", "value", "step", "param","unit","log"],
@@ -24,7 +27,6 @@ export default {
     };
   },
   created() {
-
     document.addEventListener("keydown", e => {
       if (e.key == "Shift") this.shiftPressed = true;
     });

@@ -1,16 +1,10 @@
 
-
-@font-face {
-  font-family: "Neusa Bold";
-  src: url(https://cdn.glitch.com/1520e3d1-e09f-4c87-bd42-89b5fa497055%2FNeusa-Bold.woff?1543956951264);
-}
-
 html,
 body {
   margin: 0;
   width: 100%;
   height: 100%;
-  font-family: 'Neusa Demibold', sans-serif;
+  font-family: sans-serif;
 }
 
 button {
@@ -34,6 +28,7 @@ sqnob
 .sqnob {
   position:relative;
   cursor: pointer;
+  max-width:min-content;
   border:1px solid hsla(0,0%,0%,0.25);
   border-radius: 4px;
   font-size:1em;
@@ -67,15 +62,19 @@ sqnob
 .table-holder {
 	width:100%;
 	overflow-x:scroll;
+  scroll-snap-type:x mandatory;
 }
 .pitch-table {
   border-collapse: separate;
   border-spacing:0;
 }
 .control-row {
-	display:grid;
-	grid-template-columns: 1fr 1fr 1fr 1fr;
-  padding:1em 2em;
+	display:flex;
+  padding:1em;
+  font-size:14px;
+}
+.control-row > div {
+  margin:0 calc(min(8px,1%));
 }
 .label {
 	place-self:center;
@@ -103,6 +102,7 @@ button[disabled="disabled"] {
 	white-space: nowrap;
 }
 .note-button {
+  position:relative;
 	padding:5px;
 	color:#fff;
 	cursor:pointer;
@@ -112,11 +112,10 @@ button[disabled="disabled"] {
   transition:border 300ms;
 }
 .note-grid {
-
 	display:grid;
   grid-gap:0;
 	grid-template-columns: 1fr 3fr;
-	grid-template-rows: 1fr 1fr;
+	grid-template-rows: 1fr;
 }
 .note-button.black-text {
 	color:#000;
@@ -128,4 +127,12 @@ button[disabled="disabled"] {
 .note-freq {
     font-size: 0.8em;
     line-height: 16px;
+}
+.level {
+  background-color: #fff;
+  width:5px;
+  position:absolute;
+  bottom:0;
+  left:0;
+  height:0;
 }
