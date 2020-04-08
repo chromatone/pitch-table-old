@@ -1,44 +1,17 @@
 export default {
-	template:`
-	<td	class="note-button"
-				:style="{backgroundColor:color, color:textColor}"
-				@click="toggle()"
-				:class="{'active-cell':active}"
-				>
-		<div class="note-grid">
-
-			<div class="begin">
-				{{note.name}}<br />{{octave}}
-			</div>
-			<div class="note-freq">
-				{{frequency | round}}&nbsp;Hz
-			</div>
-			<div class="note-freq">
-				{{bpm | round}}&nbsp;BPM
-			</div>
-
-		</div>
-
-	</td>
-	`,
 	props:['note','octave','root', 'tuning','type','filter'],
 	data() {
 		return {
 			active:false,
 			started:false,
 			justCents:[0,112,204,316,386,498,590,702,814,884,1017,1088],
+			activeTouches:{},
+			gain:0,
+			volume: new Tone.Volume(-Infinity),
 		}
 	},
-	filters: {
-		round(value) {
-			if (value>1e6) {
-				value = (value/1e6).toFixed(2) + 'M'
-			}
-			if (value>1e3) {
-				value = (value/1e3).toFixed(2) + 'k'
-			}
-			return value
-		}
+	mounted() {
+		this.volume.connect(this.filter.input);
 	},
 	computed: {
 		frequency() {
@@ -71,7 +44,56 @@ export default {
 			}
 		}
 	},
+	template:`
+	<td	class="note-button"
+				:style="{backgroundColor:color, color:textColor}"
+				@mousedown.prevent=""
+				@touchmove="move(event,octave+note.name)"
+		    @touchstart="activate(event,octave+note.name)" @dblclick="reset()"
+				:class="{'active-cell':active}"
+				>
+		<div class="note-grid">
+
+			<div class="begin">
+				{{note.name}}<br />{{octave}}
+			</div>
+			<div class="note-freq">
+				{{frequency | round}}&nbsp;Hz
+			</div>
+			<div class="note-freq">
+				{{bpm | round}}&nbsp;BPM
+			</div>
+
+		</div>
+
+	</td>
+	`,
 	methods:{
+		copyTouch(touch) {
+		  return { identifier: touch.identifier, pageX: touch.pageX, pageY: touch.pageY };
+		},
+		activate(ev,note) {
+			for (let i=0; i<ev.changedTouches.length; i++) {
+				let touch = ev.changedTouches[i];
+				this.activeTouches[touch.identifier]=this.copyTouch(touch)
+			}
+		},
+		move(ev) {
+			for (let i=0; i<ev.changedTouches.length; i++) {
+				let touch = this.copyTouch(ev.changedTouches[i]);
+				let prevTouch = this.activeTouches[touch.identifier];
+				if (prevTouch) {
+					let dx=touch.pageX-prevTouch.pageX;
+					let dy=-touch.pageY+prevTouch.pageY;
+					if(Math.abs(dy)>Math.abs(dx)) {
+						ev.preventDefault();
+						console.log(this.note.name+this.octave,dy/100,dx)
+						prevTouch=touch
+					}
+
+				}
+			}
+		},
 		refresh() {
 			if(this.osc) {
 				this.osc.frequency.setValueAtTime(this.calcFreq(this.note.pitch, this.octave),Tone.context.currentTime)
@@ -85,7 +107,7 @@ export default {
 					this.osc.type=this.type;
 					this.osc.frequency.value=this.frequency;
 
-					this.osc.connect(this.filter.input);
+					this.osc.connect(this.volume);
 					this.osc.start();
 					this.started=true;
 
@@ -108,5 +130,16 @@ export default {
 			}
 			 return hz
 		},
-	}
+	},
+	filters: {
+		round(value) {
+			if (value>1e6) {
+				value = (value/1e6).toFixed(2) + 'M'
+			}
+			if (value>1e3) {
+				value = (value/1e3).toFixed(2) + 'k'
+			}
+			return value
+		}
+	},
 }

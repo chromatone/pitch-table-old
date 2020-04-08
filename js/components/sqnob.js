@@ -1,13 +1,16 @@
 export default {
   template: `
-  <div @mousedown.prevent="activate"
-  @touchstart.prevent="activate" @dblclick="reset()" class="sqnob">
+  <div
+    @mousedown.prevent="activate"
+    @touchstart.prevent="activate" @dblclick="reset()" class="sqnob">
+
     <div class="sqnob-info">
       {{value | round}}{{unit}}<br>
       {{param}}
-
     </div>
+
     <div class="sqnob-value" :style="{height:internalValue+'%'}"></div>
+
   </div>
   `,
   props: ["max", "min", "value", "step", "param","unit","log"],

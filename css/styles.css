@@ -67,6 +67,7 @@ sqnob
 .table-holder {
 	width:100%;
 	overflow-x:scroll;
+  scroll-snap-type:x mandatory;
 }
 .pitch-table {
   border-collapse: separate;
