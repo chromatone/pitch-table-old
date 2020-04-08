@@ -48,7 +48,6 @@ export default {
 			document.onmouseup = this.mouseUp;
 		},
 		mouseMove(ev) {
-			console.log('11')
 			let {pageX,pageY} = ev;
 			let dy=this.mouse.y-pageY;
 			if (Math.abs(dy)>1) {this.moved=true}
@@ -62,7 +61,6 @@ export default {
 			} else {
 				this.gain=this.gain+dys
 			}
-
 		},
 		mouseUp(ev){
 			if (this.active && !this.moved) {this.gain=0}
