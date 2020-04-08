@@ -74,7 +74,7 @@ sqnob
   font-size:14px;
 }
 .control-row > div {
-  margin:0 calc(min(8px,1%));
+  margin:6px;
 }
 .label {
 	place-self:center;
