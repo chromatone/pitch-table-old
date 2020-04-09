@@ -1,20 +1,48 @@
+const styles = {
+  sqnob: {
+    flex:'1 1 50px',
+    position: 'relative',
+    cursor: 'pointer',
+    maxWidth: 'min-content',
+    border: '1px solid hsla(0,0%,0%,0.25)',
+    borderRadius: '4px',
+    fontSize: '1em',
+    margin: '4px',
+  },
+  info: {
+    userSelect: 'none',
+    textAlign:'center',
+    padding: '4px',
+    fontSize: '10px',
+    fontWeight: 'bold',
+  },
+  val: {
+    backgroundColor: 'hsla(0,0%,0%,0.25)',
+    position: 'absolute',
+    width: '100%',
+    bottom: '0',
+  }
+}
+
 export default {
   template: `
   <div
     @mousedown.prevent="mouseDown"
     @touchstart.prevent="activate"
     @dblclick="reset()"
+    :style="styles.sqnob"
     class="sqnob">
-    <div class="sqnob-info">
+    <div :style="styles.info">
       {{value | round}}&nbsp;{{unit}}<br>
       {{param}}
     </div>
-    <div class="sqnob-value" :style="{height:internalValue+'%'}"></div>
+    <div :style="{height:internalValue+'%',...styles.val}"></div>
   </div>
   `,
   props: ["max", "min", "value", "step", "param","unit","log"],
   data() {
     return {
+      styles,
       internalValue: this.mapInput(this.value),
       initialValue: this.mapInput(this.value),
       logValue: 0,
