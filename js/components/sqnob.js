@@ -1,48 +1,22 @@
-const styles = {
-  sqnob: {
-    flex:'1 1 50px',
-    position: 'relative',
-    cursor: 'pointer',
-    maxWidth: 'min-content',
-    border: '1px solid hsla(0,0%,0%,0.25)',
-    borderRadius: '4px',
-    fontSize: '1em',
-    margin: '4px',
-  },
-  info: {
-    userSelect: 'none',
-    textAlign:'center',
-    padding: '4px',
-    fontSize: '10px',
-    fontWeight: 'bold',
-  },
-  val: {
-    backgroundColor: 'hsla(0,0%,0%,0.25)',
-    position: 'absolute',
-    width: '100%',
-    bottom: '0',
-  }
-}
 
 export default {
   template: `
   <div
+    :class="{active:active}"
     @mousedown.prevent="mouseDown"
     @touchstart.prevent="activate"
     @dblclick="reset()"
-    :style="styles.sqnob"
     class="sqnob">
-    <div :style="styles.info">
-      {{value | round}}&nbsp;{{unit}}<br>
+    <div class="num">{{value | round}}</div>
+    <div class="info">
       {{param}}
     </div>
-    <div :style="{height:internalValue+'%',...styles.val}"></div>
+    <div class="value" :style="{height:internalValue+'%'}"></div>
   </div>
   `,
   props: ["max", "min", "value", "step", "param","unit","log"],
   data() {
     return {
-      styles,
       internalValue: this.mapInput(this.value),
       initialValue: this.mapInput(this.value),
       logValue: 0,
@@ -61,7 +35,7 @@ export default {
   },
   filters: {
     round(val) {
-      return Math.floor(val * 10) / 10;
+      return val.toFixed(1);
     }
   },
   methods: {

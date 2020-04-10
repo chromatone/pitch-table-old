@@ -74,7 +74,7 @@ export default {
   },
 	mounted() {
 		this.filter.connect(this.volume.input);
-		this.volume.toMaster();
+		this.volume.toDestination();
 	},
 	computed: {
 		reversedNotes() {

@@ -14,9 +14,7 @@ export default {
 	template: `
 	<div class="control-row">
 
-		<sqnob :value="vol" @input="emitVol" unit="" param="VOL" :step="0.01" :min="0" :max="1"></sqnob>
 
-		<sqnob :value="filterFreq" @input="emitFilter" unit="Hz" param="LOWPASS" :step="1" :min="20" :max="25000"></sqnob>
 
 		<div>
 			Waveform<br>
@@ -24,6 +22,9 @@ export default {
 				<img height="16" :src="'svg/'+type+'.svg'">
 			</button>
 		</div>
+		<sqnob :value="vol" @input="emitVol" unit="" param="VOL" :step="0.01" :min="0" :max="1"></sqnob>
+
+		<sqnob :value="filterFreq" @input="emitFilter" unit="Hz" param="LOWPASS" :step="1" :min="20" :max="25000"></sqnob>
 		<div>
 			Tuning<br>
 			<button :class="{active:tuning==type}" v-for="type in tuningTypes" :key="type" @click="$emit('update:tuning',type)">
